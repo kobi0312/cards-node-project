@@ -24,7 +24,8 @@ export const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = new User({ ...req.body, password: hashedPassword });
         const savedUser = await user.save();
-        res.status(201).json({ message: "User registered successfully", user: savedUser });
+        const { password: _pw, ...safeUser } = savedUser.toObject();
+        res.status(201).json({ message: "User registered successfully", user: safeUser });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -42,7 +43,11 @@ export const loginUser = async (req, res) => {
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) return res.status(400).json({ message: 'Invalid password' });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: user._id, isBusiness: user.isBusiness, isAdmin: user.isAdmin },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
         res.json({ message: "Login successful", token });
     } catch (err) {
         res.status(500).json({ message: err.message });

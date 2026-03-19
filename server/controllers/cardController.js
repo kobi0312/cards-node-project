@@ -41,9 +41,6 @@ export const updateCard = async (req, res) => {
             return res.status(404).json({ message: "Card not found" });
         }
 
-        console.log("Card User ID:", card.user_id); // Debugging
-        console.log("Request User ID:", req.user?.id); // Debugging
-
         // Ensure the logged-in user is the owner of the card
         if (!req.user || card.user_id.toString() !== req.user.id) {
             return res.status(403).json({ message: "Unauthorized" });
@@ -73,7 +70,7 @@ export const deleteCard = async (req, res) => {
             return res.status(403).json({ message: "Unauthorized" });
         }
 
-        await card.remove();
+        await Card.findByIdAndDelete(req.params.id);
         res.json({ message: "Card deleted successfully" });
     } catch (error) {
         console.error(error); // Log the error

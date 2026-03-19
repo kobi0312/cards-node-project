@@ -6,6 +6,10 @@ export default function useAxios() {
     const { token } = useCurrentUser();
 
     useEffect(() => {
-        axios.defaults.headers.common["x-auth-token"] = token;
+        if (token) {
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        } else {
+            delete axios.defaults.headers.common["Authorization"];
+        }
     }, [token]);
 }

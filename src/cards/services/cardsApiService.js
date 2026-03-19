@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:5000/cards";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+const apiUrl = `${BASE_URL}/api/cards`;
 
 export const getCards = async () => {
   try {
@@ -22,7 +23,6 @@ export const getCards = async () => {
 };
 
 export const createCard = async (card) => {
-  console.log("Card data being sent:", card); // הדפס את נתוני הכרטיס שנשלחים
   try {
     const { data } = await axios.post(apiUrl, card);
     return data;
